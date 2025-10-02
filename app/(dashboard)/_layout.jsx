@@ -20,6 +20,10 @@ const DashboardLayout = () => {
                 tabBarInactiveTintColor:theme.iconColor,
                 
             }}>  
+            <Tabs.Screen name="Explore" 
+            options={{title:'Explore Books',tabBarIcon:({focused})=>(
+                <Ionicons name={focused ? 'layers' : 'layers-outline'} size={30} color={focused ? theme.iconColorFocused : theme.iconColor} />
+            )}}/>
             <Tabs.Screen name="Books" 
             options={{title:'Books',tabBarIcon:({focused})=>(
                 <Ionicons name={focused ? 'book' : 'book-outline'} size={30} color={focused ? theme.iconColorFocused : theme.iconColor} />
@@ -34,6 +38,7 @@ const DashboardLayout = () => {
                 <Ionicons name={focused ? 'person' : 'person-outline'} size={30} color={focused ? theme.iconColorFocused : theme.iconColor} />
             )}}/>
             <Tabs.Screen name="books/[id]" options={{href:null}}/> 
+            <Tabs.Screen name="explore/[id]" options={{href:null}}/> 
 
         </Tabs>
     </UserOnly>

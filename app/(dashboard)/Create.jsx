@@ -1,4 +1,4 @@
-import { Keyboard, StyleSheet, Text, TouchableWithoutFeedback } from "react-native";
+import { Keyboard, StyleSheet, Switch, Text, TouchableWithoutFeedback ,View} from "react-native";
 import Spacer from "../../components/spacer";
 import ThemedText from "../../components/ThemedText";
 import ThemedView from "../../components/ThemedView";
@@ -13,6 +13,10 @@ const Create = () => {
   const [author, setAuthor] = useState("");
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
+  const [visibility, setvisibility] = useState(false);
+  const toggleSwitch = () => {
+    setvisibility(previousState => !previousState);
+  }
 
   const { createBook } = UseBooks();
   const router = useRouter();
@@ -22,13 +26,24 @@ const Create = () => {
       alert("Please fill all the fields");
       return;
     }
-    setLoading(true);
-    await createBook({ title, author, description });
-    setTitle("");
-    setAuthor("");
-    setDescription("");
-    router.replace("/Books");
-    setLoading(false);
+    try {
+      setLoading(true);
+      const book = await createBook({ 
+        title, 
+        author, 
+        description,
+        visibility: visibility // Make sure visibility is passed as a boolean
+      });
+      setTitle("");
+      setAuthor("");
+      setDescription("");
+      setvisibility(false);
+      router.replace("/Books");
+    } catch (error) {
+      alert("Error creating book: " + error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -64,6 +79,25 @@ const Create = () => {
           numberOfLines={4}
           style={[styles.input, { height: 100, textAlignVertical: "top" }]}
         />
+          
+        <ThemedView style={{ 
+            flexDirection: "row", 
+            alignItems: "center", 
+            alignSelf: "flex-start", // 👈 override parent centering
+            marginLeft: 60,          // spacing from left edge
+            marginTop: 20 
+          }}>
+            <Switch
+              trackColor={{ false: "#767577", true: "#81b0ff" }}
+              thumbColor={visibility ? "#f5dd4b" : "#f4f3f4"}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={toggleSwitch}
+              value={visibility}
+            />
+            <ThemedText style={{ marginRight: 10 , marginLeft: 10 }}>
+              {visibility ? "Public" : "Private"}
+            </ThemedText>
+          </ThemedView>
 
         <Spacer />
         <ThemedButton onPress={handleSubmit} disabled={loading}>

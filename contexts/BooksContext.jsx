@@ -36,6 +36,22 @@ export function BooksProvider ({ children }) {
             setLoading(false);
         }
     }
+    const fetchPublicBooks = async () => {
+        setLoading(true);
+        try{
+            const res = await databases.listDocuments(
+                DATABASE_ID, 
+                COLLECTION_ID,
+                [Query.equal("visibility", true)]
+            );
+            return res.documents;
+        }catch(error){
+            console.error("Error fetching public books:", error.message);
+            return null;
+        }finally{
+            setLoading(false);
+        }
+    };
     async function fetchBooksById(id) {
         setLoading(true);
         try {
@@ -56,6 +72,20 @@ export function BooksProvider ({ children }) {
     async function createBook(data) {
     setLoading(true);
     try {
+        const permissions = [
+            Permission.read(Role.user(user.$id)),
+            Permission.update(Role.user(user.$id)),
+            Permission.delete(Role.user(user.$id))
+        ];
+        
+        // Ensure visibility is a boolean and properly pass it from data
+        const visibility = Boolean(data.visibility);
+        
+        // Add public read permission if the book is public
+        if (visibility === true) {
+            permissions.push(Permission.read(Role.any()));
+        }
+
         const newbook = await databases.createDocument(
         DATABASE_ID,
         COLLECTION_ID,
@@ -64,13 +94,10 @@ export function BooksProvider ({ children }) {
             title: data.title,
             author: data.author,
             description: data.description,
+            visibility: visibility,
             userId: user.$id,
         },
-        [
-            Permission.read(Role.user(user.$id)),
-            Permission.update(Role.user(user.$id)),
-            Permission.delete(Role.user(user.$id)),
-        ]
+        permissions
         );
         
         // Don't manually update books state, let the subscription handle it
@@ -137,7 +164,7 @@ export function BooksProvider ({ children }) {
     }, [user]);
      
     return (
-        <BooksContext.Provider value={{ books, fetchBooks,fetchBooksById,createBook,deleteBook}}>
+        <BooksContext.Provider value={{ books, fetchBooks,fetchBooksById,fetchPublicBooks,createBook,deleteBook}}>
             {children}
         </BooksContext.Provider>
     );
