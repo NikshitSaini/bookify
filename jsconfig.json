@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "jsx": "react-native"
+  },
+  "include": [
+    "**/*.js",
+    "**/*.jsx"
+, "../.expo/faltu/about.jsx", "../.expo/faltu/contacts.jsx"  ]
+}
