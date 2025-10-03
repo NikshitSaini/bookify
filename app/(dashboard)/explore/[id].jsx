@@ -18,7 +18,6 @@ const BookDetails = () => {
     const { fetchBooksById, deleteBook } = UseBooks(); // Destructure deleteBook
     const theme = useColorScheme();
     const styles = createStyles(theme);
-    const router = useRouter();
 
     useEffect(() => {
         async function loadbook() {
@@ -30,7 +29,7 @@ const BookDetails = () => {
 
     return (
         <ThemedView safe={true} style={[styles.container, { backgroundColor: Colors[theme].background }]}>
-            <ThemedText style={{ color: Colors[theme].title }}>
+            <ThemedText style={{ color: Colors[theme].title, fontSize: 24, fontWeight: 'bold', textAlign: 'center' }}>
                 {book ? book.title : 'Loading...'}
             </ThemedText>
             <Spacer />

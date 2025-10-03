@@ -36,22 +36,23 @@ export function BooksProvider ({ children }) {
             setLoading(false);
         }
     }
-    const fetchPublicBooks = async () => {
+
+    async function fetchPublicBooks() {
         setLoading(true);
-        try{
-            const res = await databases.listDocuments(
+        try {
+                const res = await databases.listDocuments(
                 DATABASE_ID, 
                 COLLECTION_ID,
                 [Query.equal("visibility", true)]
             );
-            return res.documents;
-        }catch(error){
-            console.error("Error fetching public books:", error.message);
-            return null;
-        }finally{
+            return res.documents;    
+        } catch (error) {
+            console.error("Error fetching books:", error.message);
+            return []; 
+        } finally {
             setLoading(false);
         }
-    };
+    }
     async function fetchBooksById(id) {
         setLoading(true);
         try {
@@ -69,6 +70,31 @@ export function BooksProvider ({ children }) {
             setLoading(false);
         }
     }
+
+    async function updateBook(id, data) {
+        setLoading(true);
+        try {
+            const updated = await databases.updateDocument(
+            DATABASE_ID,
+            COLLECTION_ID,
+            id, // existing book ID
+            {
+                title: data.title,
+                author: data.author,
+                description: data.description,
+                visibility: Boolean(data.visibility),
+            }
+            );
+            return updated;
+        } catch (error) {
+            console.error("Error updating book:", error.message);
+            throw error;
+        } finally {
+            setLoading(false);
+        }
+        }
+
+
     async function createBook(data) {
     setLoading(true);
     try {
@@ -133,6 +159,7 @@ export function BooksProvider ({ children }) {
             setAuthChecked(true);
             // Fetch initial books
             fetchBooks();
+            fetchPublicBooks();
             
             // Set up realtime subscription
             unsubscribe = client.subscribe(channel, (response) => {
@@ -164,7 +191,7 @@ export function BooksProvider ({ children }) {
     }, [user]);
      
     return (
-        <BooksContext.Provider value={{ books, fetchBooks,fetchBooksById,fetchPublicBooks,createBook,deleteBook}}>
+        <BooksContext.Provider value={{ books, fetchBooks,fetchBooksById,fetchPublicBooks,createBook,deleteBook,updateBook}}>
             {children}
         </BooksContext.Provider>
     );

@@ -37,25 +37,51 @@ const BookDetails = () => {
         // 2. Enclose the path in quotes
         router.replace('/Books');
     };
+    const handleEdit = () => {
+        if (!book) return;
+        router.push({
+            pathname: '/books/edit',
+            params: { id: book.$id }
+        });
+    }
 
     return (
         <ThemedView safe={true} style={[styles.container, { backgroundColor: Colors[theme].background }]}>
-            <ThemedText style={{ color: Colors[theme].title }}>
+            <Spacer/>
+            <ThemedText style={{ color: Colors[theme].title , fontSize: 24, fontWeight: 'bold', textAlign: 'center' }}>
                 {book ? book.title : 'Loading...'}
             </ThemedText>
             <Spacer />
             <ThemedCard style={{ backgroundColor: Colors[theme].uiBackground }}>
-                <ThemedText style={{ fontWeight: 'bold', fontSize: 18, color: Colors[theme].text }}>
-                    {book ? book.author : 'Loading...'}
+                <ThemedText style={{ fontWeight: 'bold',fontStyle:"italic", fontSize: 18, color: Colors[theme].text }}>
+                    {book ? " - "+book.author : 'Loading...'}
                 </ThemedText>
                 <Spacer />
                 <ThemedText style={{ color: Colors[theme].text }}>
                     {book ? book.description : 'Loading...'}
                 </ThemedText>
             </ThemedCard>
-            <ThemedButton style={styles.delete} onPress={handleDelete}>
-                <ThemedText style={{ color: '#f2f2f2' }}>Delete Book</ThemedText>
-            </ThemedButton>
+            <ThemedCard style=
+            {{ backgroundColor: Colors[theme].uiBackground, 
+                marginTop:20, paddingVertical:10,
+                flexDirection: "row", 
+                alignItems: "center", 
+                alignSelf: "flex-start", 
+                justifyContent: "space-around",
+                width: '100%' 
+            }}>
+
+                <ThemedButton style={styles.edit} onPress={handleEdit}>
+                    <ThemedText style={{ color: '#f2f2f2' }}>Edit Book</ThemedText>
+                </ThemedButton>
+                
+                <ThemedButton style={styles.delete} onPress={handleDelete}>
+                    <ThemedText style={{ color: '#f2f2f2' }}>Delete Book</ThemedText>
+                </ThemedButton>
+
+
+            </ThemedCard>
+
         </ThemedView>
     );
 };
@@ -76,6 +102,21 @@ const createStyles = (theme) => {
         marginTop:40,
         backgroundColor:Colors. warning,
         borderColor:'#ff4d4d',
+        width:130,
+        alignItems:'center',
+        alignSelf:'center',
+        borderWidth:1,
+        borderRadius:8,
+        shadowColor: "#000",
+        shadowOpacity: 0.1,
+        shadowRadius: 6,
+        shadowOffset: { width: 0, height: 2 },
+        elevation: 4,
+    }
+    ,edit:{
+        marginTop:40,
+        backgroundColor:'#2dda7aff',
+        borderColor:'#2dda7aff',
         width:130,
         alignItems:'center',
         alignSelf:'center',
